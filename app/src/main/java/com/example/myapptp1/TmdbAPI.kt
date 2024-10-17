@@ -19,53 +19,55 @@ interface TmdbAPI {
         @Query("query") query: String
     ): Response<ModelListMovie>
 
+    @GET("movie/{id}")
+    suspend fun getMovieDetails(
+        @Path("id") movieId: Int,
+        @Query("api_key") apiKey: String,
+        @Query("language") language: String,
+        @Query("append_to_response") appendToResponse: String = "credits"
+    ): ModelMovie
+
+
     @GET("trending/tv/week")
     suspend fun lastseries(
         @Query("api_key") api_key: String,
         @Query("language") language: String
-    ): ModelListTV
+    ): ModelListSerie
 
     @GET("search/tv")
     suspend fun searchSeries(
         @Query("api_key") apiKey: String,
         @Query("language") language: String,
         @Query("query") query: String
-    ): Response<ModelListTV>
-
-    @GET("trending/person/week")
-    suspend fun lastacteurs(
-        @Query("api_key") api_key: String, @Query("language") language: String
-    ): ModelListPerson
-
-    @GET("search/person")
-    suspend fun searchActeurs(
-        @Query("api_key") apiKey: String,
-        @Query("language") language: String,
-        @Query("query") query: String
-    ): Response<ModelListPerson>
-
-    @GET("movie/{id}")
-    suspend fun getMovieDetails(
-        @Path("id") movieId: Int,
-        @Query("api_key") apiKey: String,
-        @Query("language") language: String,
-        @Query("append_to_response") appendToResponse: String = "credits" // Ajout de credits
-    ): ModelMovie
+    ): Response<ModelListSerie>
 
     @GET("tv/{id}")
     suspend fun getSerieDetails(
         @Path("id") serieId: Int,
         @Query("api_key") apiKey: String,
         @Query("language") language: String,
-        @Query("append_to_response") appendToResponse: String = "credits" // Ajout de credits
-    ): ModelTV
+        @Query("append_to_response") appendToResponse: String = "credits"
+    ): ModelSerie
+
+
+    @GET("trending/person/week")
+    suspend fun lastactors(
+        @Query("api_key") api_key: String, @Query("language") language: String
+    ): ModelListActor
+
+    @GET("search/person")
+    suspend fun searchActors(
+        @Query("api_key") apiKey: String,
+        @Query("language") language: String,
+        @Query("query") query: String
+    ): Response<ModelListActor>
 
     @GET("person/{id}")
     suspend fun getActorDetails(
         @Path("id") serieId: Int,
         @Query("api_key") apiKey: String,
         @Query("language") language: String,
-        @Query("append_to_response") appendToResponse: String = "credits" // Ajout de credits
-    ): ModelPerson
+        @Query("append_to_response") appendToResponse: String = "credits"
+    ): ModelActor
 }
 

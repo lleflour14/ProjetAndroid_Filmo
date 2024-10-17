@@ -32,27 +32,28 @@ import androidx.window.core.layout.WindowWidthSizeClass
 import coil.compose.AsyncImage
 
 @Composable
-fun SerieDetailsScreen(
+fun MovieDetailsScreen(
     viewModel: MainViewModel,
-    serieId: Int,
+    movieId: Int,
     navController: NavController,
-    windowSizeClass: WindowSizeClass
+    windowClass: WindowSizeClass
 ) {
 
-    LaunchedEffect(serieId) {
-        viewModel.getSerieById(serieId)
+    LaunchedEffect(movieId) {
+        viewModel.getMovieById(movieId)
     }
 
-    val serie by viewModel.selectedSerie.collectAsState(initial = null)
+    val movie by viewModel.selectedMovie.collectAsState()
 
-    serie?.let { serieDetails ->
+
+    movie?.let { movieDetails ->
         LazyColumn(modifier = Modifier.fillMaxSize()) {
-            when (windowSizeClass.windowWidthSizeClass) {
+            when (windowClass.windowWidthSizeClass) {
                 WindowWidthSizeClass.COMPACT -> {
                     item {
                         AsyncImage(
-                            model = "https://image.tmdb.org/t/p/w500${serieDetails.backdrop_path}",
-                            contentDescription = "Image de la série",
+                            model = "https://image.tmdb.org/t/p/w500${movieDetails.backdrop_path}",
+                            contentDescription = "Image du film",
                             contentScale = ContentScale.Crop,
                             modifier = Modifier
                                 .fillMaxWidth()
@@ -65,7 +66,7 @@ fun SerieDetailsScreen(
             }
             item {
                 Text(
-                    text = serieDetails.name,
+                    text = movieDetails.title,
                     style = MaterialTheme.typography.headlineLarge,
                     fontWeight = FontWeight.Bold,
                     modifier = Modifier.padding(16.dp)
@@ -74,16 +75,20 @@ fun SerieDetailsScreen(
             item {
                 Row(modifier = Modifier.padding(16.dp)) {
                     AsyncImage(
-                        model = "https://image.tmdb.org/t/p/w500${serieDetails.poster_path}",
-                        contentDescription = "poster de la série",
+                        model = "https://image.tmdb.org/t/p/w500${movieDetails.poster_path}",
+                        contentDescription = null,
                         modifier = Modifier
                             .width(150.dp)
                             .height(225.dp)
                     )
                     Column(modifier = Modifier.padding(start = 16.dp)) {
-                        Text(text = "Date de sortie: ${serieDetails.last_air_date}")
-                        Text(text = "Genres: ${serieDetails.genres?.joinToString(", ") { genre -> genre.name }}")
-                        Text(text = "Note: ${serieDetails.vote_average}/10")
+                        Text(
+                            text = "Date de sortie: ${movieDetails.release_date}"
+                        )
+                        Text(
+                            text = "Genres: ${movieDetails.genres.joinToString { it.name }}"
+                        )
+                        Text(text = "Note: ${movieDetails.vote_average}/10")
                     }
                 }
             }
@@ -96,7 +101,7 @@ fun SerieDetailsScreen(
             }
             item {
                 Text(
-                    text = serieDetails.overview,
+                    text = movieDetails.overview,
                     style = MaterialTheme.typography.bodyMedium,
                     modifier = Modifier.padding(16.dp)
                 )
@@ -109,13 +114,15 @@ fun SerieDetailsScreen(
                 )
             }
             item {
-                if (!serieDetails.credits?.cast.isNullOrEmpty()) {
+                if (movieDetails.credits?.cast != null && movieDetails.credits.cast.isNotEmpty()) {
                     Column(
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(16.dp)
                     ) {
-                        val actors = serieDetails.credits?.cast?.take(9)
+
+                        val actors =
+                            movieDetails.credits?.cast?.take(9)
                         actors?.let {
                             for (i in it.indices step 3) {
                                 Row(
@@ -129,7 +136,6 @@ fun SerieDetailsScreen(
                                                 horizontalAlignment = Alignment.CenterHorizontally,
                                                 modifier = Modifier
                                                     .padding(4.dp)
-                                                    .weight(1f)
                                                     .clickable {
                                                         navController.navigate("acteurDetails/${actor.id}")
                                                     }
@@ -153,7 +159,6 @@ fun SerieDetailsScreen(
                                 }
                             }
                         }
-
                     }
                 } else {
                     Text(text = "Aucun acteur trouvé.", modifier = Modifier.padding(16.dp))

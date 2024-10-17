@@ -10,19 +10,18 @@ import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
 
 class MainViewModel : ViewModel() {
-    val movies = MutableStateFlow<List<ResultMovie>>(listOf())
-    val series = MutableStateFlow<List<ResultTV>>(listOf())
-    val acteurs = MutableStateFlow<List<ResultPerson>>(listOf())
+    val movies = MutableStateFlow<List<ModelMovie>>(listOf())
+    val series = MutableStateFlow<List<ModelSerie>>(listOf())
+    val actors = MutableStateFlow<List<ModelActor>>(listOf())
 
     private val _selectedMovie = MutableStateFlow<ModelMovie?>(null)
     val selectedMovie: StateFlow<ModelMovie?> = _selectedMovie
 
-    private val _selectedSerie = MutableStateFlow<ModelTV?>(null)
-    val selectedSerie: StateFlow<ModelTV?> = _selectedSerie
+    private val _selectedSerie = MutableStateFlow<ModelSerie?>(null)
+    val selectedSerie: StateFlow<ModelSerie?> = _selectedSerie
 
-    private val _selectedActor = MutableStateFlow<ModelPerson?>(null)
-    val selectedActor: StateFlow<ModelPerson?> = _selectedActor
-    
+    private val _selectedActor = MutableStateFlow<ModelActor?>(null)
+    val selectedActor: StateFlow<ModelActor?> = _selectedActor
 
 
     val retrofit = Retrofit.Builder()
@@ -35,11 +34,10 @@ class MainViewModel : ViewModel() {
     val api_key = "571b6cc10de4dc2fdf12b8068b8f3422"
 
 
-
     fun getMovies() {
         viewModelScope.launch {
             try {
-                movies.value = api.lastmovies(api_key,"fr").results
+                movies.value = api.lastmovies(api_key, "fr").results
             } catch (e: Exception) {
                 e.printStackTrace()
             }
@@ -49,16 +47,13 @@ class MainViewModel : ViewModel() {
     fun searchMovies(query: String) {
         viewModelScope.launch {
             try {
-                // Appelle l'API Retrofit pour rechercher les films en fonction du mot clé
-                val response = api.searchMovies(api_key,"fr",query)
+                val response = api.searchMovies(api_key, "fr", query)
                 if (response.isSuccessful) {
                     response.body()?.let { movieList ->
-                        // Mets à jour le flux des films avec les résultats de la recherche
-                        movies.value=movieList.results
+                        movies.value = movieList.results
                     }
                 }
             } catch (e: Exception) {
-                // Gestion des erreurs
                 Log.e("MainViewModel", "Erreur lors de la recherche de films", e)
             }
         }
@@ -67,7 +62,7 @@ class MainViewModel : ViewModel() {
     fun getSeries() {
         viewModelScope.launch {
             try {
-                val latestSerie = api.lastseries(api_key,"fr")
+                val latestSerie = api.lastseries(api_key, "fr")
                 series.value = latestSerie.results
             } catch (e: Exception) {
                 e.printStackTrace()
@@ -78,54 +73,48 @@ class MainViewModel : ViewModel() {
     fun searchSeries(query: String) {
         viewModelScope.launch {
             try {
-                // Appelle l'API Retrofit pour rechercher les films en fonction du mot clé
-                val response = api.searchSeries(api_key,"fr",query)
+                val response = api.searchSeries(api_key, "fr", query)
                 if (response.isSuccessful) {
                     response.body()?.let { serieList ->
-                        // Mets à jour le flux des films avec les résultats de la recherche
-                        series.value=serieList.results
+                        series.value = serieList.results
                     }
                 }
             } catch (e: Exception) {
-                // Gestion des erreurs
                 Log.e("MainViewModel", "Erreur lors de la recherche de series", e)
             }
         }
     }
 
-    fun getActeurs() {
+    fun getActors() {
         viewModelScope.launch {
             try {
-                val latestActeur = api.lastacteurs(api_key,"fr")
-                acteurs.value = latestActeur.results
+                val latestActor = api.lastactors(api_key, "fr")
+                actors.value = latestActor.results
             } catch (e: Exception) {
                 e.printStackTrace()
             }
         }
     }
 
-    fun searchActeurs(query: String) {
+    fun searchActors(query: String) {
         viewModelScope.launch {
             try {
-                // Appelle l'API Retrofit pour rechercher les films en fonction du mot clé
-                val response = api.searchActeurs(api_key,"fr",query)
+                val response = api.searchActors(api_key, "fr", query)
                 if (response.isSuccessful) {
-                    response.body()?.let { acteurList ->
-                        // Mets à jour le flux des films avec les résultats de la recherche
-                        acteurs.value=acteurList.results
+                    response.body()?.let { actorList ->
+                        actors.value = actorList.results
                     }
                 }
             } catch (e: Exception) {
-                // Gestion des erreurs
                 Log.e("MainViewModel", "Erreur lors de la recherche des acteurs", e)
             }
         }
     }
 
-    fun getMovieById(movieId:Int) {
+    fun getMovieById(movieId: Int) {
         viewModelScope.launch {
             try {
-                val movieDetails = api.getMovieDetails(movieId, api_key,"fr","credits")
+                val movieDetails = api.getMovieDetails(movieId, api_key, "fr", "credits")
                 _selectedMovie.value = movieDetails
             } catch (e: Exception) {
                 e.printStackTrace()
@@ -133,29 +122,23 @@ class MainViewModel : ViewModel() {
         }
     }
 
-    fun getSerieById(serieId:Int) {
+    fun getSerieById(serieId: Int) {
         viewModelScope.launch {
             try {
-                val serieDetails = api.getSerieDetails(serieId, api_key,"fr","credits")
+                val serieDetails = api.getSerieDetails(serieId, api_key, "fr", "credits")
                 _selectedSerie.value = serieDetails
-                Log.d("MainViewModel", "Série récupérée : $serieDetails")
-
             } catch (e: Exception) {
-                Log.e("MainViewModel", "Erreur lors de la récupération des détails de la série : ${e.message}")
                 e.printStackTrace()
             }
         }
     }
 
-    fun getActorById(actorId:Int) {
+    fun getActorById(actorId: Int) {
         viewModelScope.launch {
             try {
-                val actorDetails = api.getActorDetails(actorId, api_key,"fr","credits")
+                val actorDetails = api.getActorDetails(actorId, api_key, "fr", "credits")
                 _selectedActor.value = actorDetails
-                Log.d("MainViewModel", "Série récupérée : $actorDetails")
-
             } catch (e: Exception) {
-                Log.e("MainViewModel", "Erreur lors de la récupération des détails de l'acteur : ${e.message}")
                 e.printStackTrace()
             }
         }

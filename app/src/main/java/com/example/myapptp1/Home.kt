@@ -24,7 +24,7 @@ import androidx.window.core.layout.WindowSizeClass
 import androidx.window.core.layout.WindowWidthSizeClass
 
 @Composable
-fun HomeScreen(windowClass: WindowSizeClass,navController: NavHostController) {
+fun HomeScreen(windowClass: WindowSizeClass, navController: NavHostController) {
     when (windowClass.windowWidthSizeClass) {
         WindowWidthSizeClass.COMPACT -> {
             // centrés verticalement
@@ -35,34 +35,36 @@ fun HomeScreen(windowClass: WindowSizeClass,navController: NavHostController) {
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center
             ) {
-                Photo()
+                Picture()
                 Spacer(modifier = Modifier.height(16.dp))
-                Infos()
+                Data()
                 Spacer(modifier = Modifier.height(32.dp))
-                Reseaux()
+                Network()
                 Spacer(modifier = Modifier.height(65.dp))
-                Bouton(navController)
+                ButtonStart(navController)
             }
         }
+
         else -> {
-            Row(modifier = Modifier
-                .padding(40.dp),
+            Row(
+                modifier = Modifier
+                    .padding(40.dp),
                 verticalAlignment = Alignment.CenterVertically
 
             ) {
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    Photo()
+                    Picture()
                     Spacer(modifier = Modifier.height(10.dp))
-                    Infos()
+                    Data()
                 }
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    Reseaux()
+                    Network()
                     Spacer(modifier = Modifier.height(15.dp))
-                    Bouton(navController)
+                    ButtonStart(navController)
                 }
             }
         }
@@ -70,28 +72,24 @@ fun HomeScreen(windowClass: WindowSizeClass,navController: NavHostController) {
 }
 
 @Composable
-fun Photo(){
-    // Encapsuler l'image dans un Box pour ajouter une bordure
-
-        // Ajouter une image en haut
-        Image(
-            painter = painterResource(id = R.drawable._0_moiphoto),
-            contentDescription = "Photo de profil",
-            modifier = Modifier
-                .size(200.dp)
-                .clip(CircleShape)
-                .border(
-                    BorderStroke(2.dp, Color.Gray), // Bordure de 2dp et couleur grise
-                    CircleShape
-                ), // Donne une forme circulaire à l'image
-            contentScale = ContentScale.Crop
-        )
+fun Picture() {
+    Image(
+        painter = painterResource(id = R.drawable.profil_picture),
+        contentDescription = "profilPicture",
+        modifier = Modifier
+            .size(200.dp)
+            .clip(CircleShape)
+            .border(
+                BorderStroke(2.dp, Color.Gray),
+                CircleShape
+            ),
+        contentScale = ContentScale.Crop
+    )
 
 }
 
 @Composable
-fun Infos(){
-    // Ajouter nom et prénom en gras et en gros
+fun Data() {
     Text(
         text = "Louise Le Flour",
         style = MaterialTheme.typography.headlineLarge,
@@ -100,7 +98,6 @@ fun Infos(){
 
     Spacer(modifier = Modifier.height(16.dp))
 
-    // Ajouter statut
     Text(
         text = "Etudiante",
         fontStyle = FontStyle.Italic,
@@ -108,7 +105,6 @@ fun Infos(){
         textAlign = TextAlign.Center
     )
 
-    // Ajouter école en italique
     Text(
         text = "Ecole d'ingénieur ISIS - INU Champollion",
         fontStyle = FontStyle.Italic,
@@ -119,21 +115,21 @@ fun Infos(){
 }
 
 @Composable
-fun Reseaux(){
+fun Network() {
 
     Column(
         modifier = Modifier
             .fillMaxWidth()
             .wrapContentWidth(Alignment.CenterHorizontally)
     ) {
-        // Ajouter email et LinkedIn avec icônes
+
         Row(
             horizontalArrangement = Arrangement.spacedBy(8.dp),
             modifier = Modifier.align(Alignment.Start)
         )
         {
             Icon(
-                painter = painterResource(id = R.drawable.ic_mail), // Remplacez avec votre icône LinkedIn
+                painter = painterResource(id = R.drawable.ic_mail),
                 contentDescription = "LinkedIn Icon",
                 modifier = Modifier.size(24.dp)
             )
@@ -143,29 +139,27 @@ fun Reseaux(){
             )
         }
         Row(
-            //verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(8.dp),
             modifier = Modifier.align(Alignment.Start)
         ) {
             Icon(
-                painter = painterResource(id = R.drawable.ic_black_linkedin), // Remplacez avec votre icône LinkedIn
+                painter = painterResource(id = R.drawable.ic_black_linkedin),
                 contentDescription = "LinkedIn Icon",
                 modifier = Modifier.size(24.dp)
             )
             Text(
                 text = "www.linkedin.com/in/louise-leflour",
                 style = MaterialTheme.typography.bodyLarge,
-                textDecoration = TextDecoration.Underline // pour souligner
+                textDecoration = TextDecoration.Underline
             )
         }
     }
 }
 
 @Composable
-fun Bouton(navController: NavHostController){
-    // Ajouter un bouton en bas
+fun ButtonStart(navController: NavHostController) {
     Button(
-        onClick = {navController.navigate(Film()) },
+        onClick = { navController.navigate(Movies()) },
         colors = ButtonDefaults.buttonColors(containerColor = Color(252, 218, 48))
     ) {
         Text(text = "Démarrer", color = Color.Black)

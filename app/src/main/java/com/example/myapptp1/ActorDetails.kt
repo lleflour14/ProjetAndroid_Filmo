@@ -56,7 +56,7 @@ fun ActorDetailsScreen(viewModel: MainViewModel, actorId: Int, navController: Na
                 Row(modifier = Modifier.padding(16.dp)) {
                     if (actorDetails.profile_path == null) {
                         Icon(
-                            painter = painterResource(id = R.drawable.utilisateur_ic), // Remplacez avec votre icône LinkedIn
+                            painter = painterResource(id = R.drawable.user),
                             contentDescription = "user Icon",
                             modifier = Modifier.size(150.dp)
                         )
@@ -116,7 +116,6 @@ fun ActorDetailsScreen(viewModel: MainViewModel, actorId: Int, navController: Na
                 )
             }
             item {
-                // Affichage des acteurs en grille
                 if (actorDetails.credits?.cast != null && actorDetails.credits.cast.isNotEmpty()) {
                     Column(
                         modifier = Modifier
@@ -129,8 +128,7 @@ fun ActorDetailsScreen(viewModel: MainViewModel, actorId: Int, navController: Na
                                 .padding(16.dp)
                         ) {
 
-                            val movie =
-                                actorDetails.credits.cast.take(9) // Récupérer les 9 premiers films
+                            val movie = actorDetails.credits.cast.take(9)
                             movie.let {
                                 for (i in it.indices step 3) {
                                     Row(
@@ -147,27 +145,26 @@ fun ActorDetailsScreen(viewModel: MainViewModel, actorId: Int, navController: Na
                                                         .weight(1f)
                                                         .clickable {
                                                             navController.navigate("movieDetails/${movie.id}")
-                                                        } // Naviguer vers la page de l'acteur
+                                                        }
                                                 ) {
-                                                    // Image du films
                                                     if (movie.poster_path == null) {
 
-                                                            Icon(
-                                                                painterResource(id = R.drawable.camera_video),
-                                                                contentDescription = "Films"
-                                                            )
+                                                        Icon(
+                                                            painterResource(id = R.drawable.camera),
+                                                            contentDescription = "Films"
+                                                        )
 
-                                                    }else{
-                                                    AsyncImage(
+                                                    } else {
+                                                        AsyncImage(
 
-                                                        model = "https://image.tmdb.org/t/p/w500${movie.poster_path}",
-                                                        contentDescription = movie.title,
-                                                        modifier = Modifier
-                                                            .size(100.dp)
-                                                            .clip(CircleShape),
-                                                        contentScale = ContentScale.Crop
-                                                    )}
-                                                    // Nom de l'acteur
+                                                            model = "https://image.tmdb.org/t/p/w500${movie.poster_path}",
+                                                            contentDescription = movie.title,
+                                                            modifier = Modifier
+                                                                .size(100.dp)
+                                                                .clip(CircleShape),
+                                                            contentScale = ContentScale.Crop
+                                                        )
+                                                    }
                                                     Text(
                                                         text = movie.title,
                                                         textAlign = TextAlign.Center,

@@ -60,13 +60,13 @@ import androidx.window.core.layout.WindowWidthSizeClass
 class Home
 
 @Serializable
-class Film
+class Movies
 
 @Serializable
-class Serie
+class Series
 
 @Serializable
-class Acteur
+class Actors
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -74,98 +74,114 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             MyAppTP1Theme {
-                val windowSizeClass = currentWindowAdaptiveInfo().windowSizeClass
-                when (windowSizeClass.windowWidthSizeClass) {
-                    WindowWidthSizeClass.COMPACT -> {}else->{}}
-
-                NavigationBarre(windowSizeClass)
-
-
+                NavigationBar()
             }
         }
     }
 }
 
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun NavigationBarre(windowSizeClass: WindowSizeClass) {
+fun searching(){
+    var searchText by remember { mutableStateOf(TextFieldValue("")) }
     val viewModel: MainViewModel = viewModel()
     val navController = rememberNavController()
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentDestination = navBackStackEntry?.destination
 
-    var showSearch by remember { mutableStateOf(false) } // Gérer l'état de la barre de recherche
-    var searchText by remember { mutableStateOf(TextFieldValue("")) } // Texte de la recherche
+    TextField(
+        value = searchText,
+        onValueChange = { query ->
+            searchText = query
+            if (currentDestination?.hasRoute<Movies>() == true) {
+
+                if (query.text.isNotEmpty()) {
+                    viewModel.searchMovies(query.text)
+                } else {
+                    viewModel.getMovies()
+                }
+
+            }
+            if (currentDestination?.hasRoute<Series>() == true) {
+
+                if (query.text.isNotEmpty()) {
+                    viewModel.searchSeries(query.text)
+                } else {
+                    viewModel.getSeries()
+                }
+
+            } else {
+                if (query.text.isNotEmpty()) {
+                    viewModel.searchActors(query.text)
+                } else {
+                    viewModel.getActors()
+                }
+
+            }
+        },
+        singleLine = true,
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp)
+            .height(56.dp),
+        placeholder = { Text("Recherche...") },
+        colors = TextFieldDefaults.textFieldColors(
+            cursorColor = Color.Yellow,
+            containerColor = Color( 252, 218, 48
+            )
+        )
+    )
+}
+
+/*
+@Composable
+fun ButtonSearching(){
+    var showSearch by remember { mutableStateOf(false) }
+
+    IconButton(onClick = { showSearch = !showSearch }) {
+        Icon(
+            painter = painterResource(id = R.drawable.glass),
+            modifier = Modifier
+                .fillMaxSize(),
+            contentDescription = "Search"
+
+        )
+    }
+}*/
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun NavigationBar() {
+    val windowSizeClass = currentWindowAdaptiveInfo().windowSizeClass
+    val viewModel: MainViewModel = viewModel()
+    val navController = rememberNavController()
+    val navBackStackEntry by navController.currentBackStackEntryAsState()
+    val currentDestination = navBackStackEntry?.destination
+    var showSearch by remember { mutableStateOf(false) }
+
 
     Scaffold(
         topBar = {
             when (windowSizeClass.windowWidthSizeClass) {
-
                 WindowWidthSizeClass.COMPACT -> {
 
                     if (currentDestination?.hasRoute<Home>() != true) {
                         TopAppBar(
                             title = {
+                                //barre de recherche
                                 if (showSearch) {
-                                    TextField(
-                                        value = searchText,
-                                        onValueChange = { query ->
-                                            searchText = query
-                                            if (currentDestination?.hasRoute<Film>() == true) {
-
-                                                if (query.text.isNotEmpty()) {
-                                                    viewModel.searchMovies(query.text)
-                                                } else {
-                                                    viewModel.getMovies()
-                                                }
-
-                                            }
-                                            if (currentDestination?.hasRoute<Serie>() == true) {
-
-                                                if (query.text.isNotEmpty()) {
-                                                    viewModel.searchSeries(query.text)
-                                                } else {
-                                                    viewModel.getSeries()
-                                                }
-
-                                            } else {
-                                                if (query.text.isNotEmpty()) {
-                                                    viewModel.searchActeurs(query.text)
-                                                } else {
-                                                    viewModel.getActeurs()
-                                                }
-
-                                            }
-                                        },
-                                        singleLine = true,
-                                        modifier = Modifier
-                                            .fillMaxWidth()
-                                            .padding(horizontal = 16.dp)
-                                            .height(56.dp),
-                                        placeholder = { Text("Recherche...") },
-                                        colors = TextFieldDefaults.textFieldColors(
-                                            cursorColor = Color.White,
-                                            containerColor = Color(
-                                                252,
-                                                218,
-                                                48
-                                            ) // Couleur de la zone de recherche
-                                        )
-                                    )
+                                  searching()
                                 } else {
-
-                                    Text(text = "Bizar'App", modifier = Modifier.fillMaxWidth())
+                                    Text(text = "CinéVerse", modifier = Modifier.fillMaxWidth())
                                 }
-
                             },
                             actions = {
                                 IconButton(onClick = { showSearch = !showSearch }) {
                                     Icon(
-                                        painter = painterResource(id = R.drawable.loupe),
+                                        painter = painterResource(id = R.drawable.glass),
                                         modifier = Modifier
                                             .fillMaxSize(),
-                                        contentDescription = "Recherche"
+                                        contentDescription = "Search"
 
                                     )
                                 }
@@ -187,6 +203,8 @@ fun NavigationBarre(windowSizeClass: WindowSizeClass) {
                 else -> {}
             }
         },
+
+        //bouton flottant qui ramene à l'accueil
         floatingActionButton = {
             if (currentDestination?.hasRoute<Home>() != true) {
                 FloatingActionButton(
@@ -197,9 +215,9 @@ fun NavigationBarre(windowSizeClass: WindowSizeClass) {
                     containerColor = Color(252, 218, 48),
                 ) {
                     Icon(
-                        painter = painterResource(id = R.drawable.maison_ic), // Remplace avec l'image de ta maison
-                        contentDescription = "Retour à l'accueil",
-                        modifier = Modifier.size(30.dp) // Ajuste la taille de l'icône
+                        painter = painterResource(id = R.drawable.house),
+                        contentDescription = "home",
+                        modifier = Modifier.size(30.dp)
                     )
                 }
             }
@@ -210,7 +228,7 @@ fun NavigationBarre(windowSizeClass: WindowSizeClass) {
             if (currentDestination?.hasRoute<Home>() != true) {
                 when (windowSizeClass.windowWidthSizeClass) {
                     WindowWidthSizeClass.COMPACT -> {
-
+                        //barre de naviagtion en bas
                         NavigationBar(
                             containerColor = Color(252, 218, 48),
                             modifier = Modifier
@@ -219,17 +237,17 @@ fun NavigationBarre(windowSizeClass: WindowSizeClass) {
                             NavigationBarItem(
                                 icon = {
                                     Icon(
-                                        painter = painterResource(id = R.drawable.camera_video),
+                                        painter = painterResource(id = R.drawable.camera),
                                         contentDescription = "Movie Icon",
                                         modifier = Modifier.size(24.dp),
                                         tint = Color.Black
                                     )
                                 }, label = { Text("Films") },
-                                selected = currentDestination?.hasRoute<Film>() == true,
+                                selected = currentDestination?.hasRoute<Movies>() == true,
                                 colors = NavigationBarItemDefaults.colors(
                                     indicatorColor = Color.Yellow
                                 ),
-                                onClick = { navController.navigate(Film()) })
+                                onClick = { navController.navigate(Movies()) })
                             NavigationBarItem(
                                 icon = {
                                     Icon(
@@ -239,25 +257,25 @@ fun NavigationBarre(windowSizeClass: WindowSizeClass) {
                                         tint = Color.Black
                                     )
                                 }, label = { Text("Séries") },
-                                selected = currentDestination?.hasRoute<Serie>() == true,
+                                selected = currentDestination?.hasRoute<Series>() == true,
                                 colors = NavigationBarItemDefaults.colors(
                                     indicatorColor = Color.Yellow
                                 ),
-                                onClick = { navController.navigate(Serie()) })
+                                onClick = { navController.navigate(Series()) })
                             NavigationBarItem(
                                 icon = {
                                     Icon(
-                                        painter = painterResource(id = R.drawable.la_personne),
+                                        painter = painterResource(id = R.drawable.person),
                                         contentDescription = "Actor Icon",
                                         modifier = Modifier.size(24.dp),
                                         tint = Color.Black
                                     )
                                 }, label = { Text("Acteurs") },
-                                selected = currentDestination?.hasRoute<Acteur>() == true,
+                                selected = currentDestination?.hasRoute<Actors>() == true,
                                 colors = NavigationBarItemDefaults.colors(
                                     indicatorColor = Color.Yellow
                                 ),
-                                onClick = { navController.navigate(Acteur()) })
+                                onClick = { navController.navigate(Actors()) })
                         }
                     }
 
@@ -271,7 +289,6 @@ fun NavigationBarre(windowSizeClass: WindowSizeClass) {
         Row {
             if (currentDestination?.hasRoute<Home>() != true) {
                 when (windowSizeClass.windowWidthSizeClass) {
-
                     WindowWidthSizeClass.COMPACT -> {
                     }
 
@@ -289,9 +306,9 @@ fun NavigationBarre(windowSizeClass: WindowSizeClass) {
                     modifier = Modifier.padding(innerPadding)
                 ) {
                     composable<Home> { HomeScreen(windowSizeClass, navController) }
-                    composable<Film> { FilmScreen(viewModel, navController, windowSizeClass) }
-                    composable<Serie> { SerieScreen(viewModel, navController) }
-                    composable<Acteur> { ActeurScreen(viewModel, navController) }
+                    composable<Movies> { MoviesScreen(viewModel, navController, windowSizeClass) }
+                    composable<Series> { SeriesScreen(viewModel, navController, windowSizeClass) }
+                    composable<Actors> { ActorsScreen(viewModel, navController, windowSizeClass) }
 
                     composable(
                         "movieDetails/{movieId}",
@@ -299,7 +316,7 @@ fun NavigationBarre(windowSizeClass: WindowSizeClass) {
                     ) { backStackEntry ->
                         val movieId = backStackEntry.arguments?.getInt("movieId")
                         movieId?.let {
-                            FilmDetailsScreen(
+                            MovieDetailsScreen(
                                 viewModel = viewModel,
                                 movieId = it,
                                 navController,
@@ -314,7 +331,12 @@ fun NavigationBarre(windowSizeClass: WindowSizeClass) {
                     ) { backStackEntry ->
                         val serieId = backStackEntry.arguments?.getInt("serieId")
                         serieId?.let {
-                            SerieDetailsScreen(viewModel = viewModel, serieId = it, navController)
+                            SerieDetailsScreen(
+                                viewModel = viewModel,
+                                serieId = it,
+                                navController,
+                                windowSizeClass
+                            )
                         }
                     }
 
@@ -348,16 +370,16 @@ fun NavigationBarSide(
         NavigationRailItem(
             icon = {
                 Icon(
-                    painter = painterResource(id = R.drawable.camera_video),
-                    contentDescription = "Films",
-                    modifier = Modifier.size(40.dp), // Taille de l'icône augmentée
+                    painter = painterResource(id = R.drawable.camera),
+                    contentDescription = "Movies",
+                    modifier = Modifier.size(40.dp),
                     tint = Color.Black
                 )
             },
-            selected = currentDestination?.hasRoute<Film>() == true,
-            onClick = { navController.navigate(Film()) },
+            selected = currentDestination?.hasRoute<Movies>() == true,
+            onClick = { navController.navigate(Movies()) },
             colors = NavigationRailItemDefaults.colors(
-                selectedIconColor = Color.Black, // Couleur surlignée si sélectionnée
+                indicatorColor = Color.Yellow
             )
         )
         Spacer(modifier = Modifier.weight(1f))
@@ -365,34 +387,35 @@ fun NavigationBarSide(
             icon = {
                 Icon(
                     painter = painterResource(id = R.drawable.series),
-                    contentDescription = "Séries",
-                    modifier = Modifier.size(40.dp), // Taille de l'icône augmentée
+                    contentDescription = "Series",
+                    modifier = Modifier.size(40.dp),
                     tint = Color.Black
                 )
             },
-            selected = currentDestination?.hasRoute<Serie>() == true,
-            onClick = { navController.navigate(Serie()) },
+            selected = currentDestination?.hasRoute<Series>() == true,
+            onClick = { navController.navigate(Series()) },
             colors = NavigationRailItemDefaults.colors(
-                selectedIconColor = Color.Yellow, // Couleur surlignée si sélectionnée
+                indicatorColor = Color.Yellow
             )
         )
         Spacer(modifier = Modifier.weight(1f))
         NavigationRailItem(
             icon = {
                 Icon(
-                    painter = painterResource(id = R.drawable.la_personne),
-                    contentDescription = "Acteurs",
-                    modifier = Modifier.size(40.dp), // Taille de l'icône augmentée
+                    painter = painterResource(id = R.drawable.person),
+                    contentDescription = "Actors",
+                    modifier = Modifier.size(40.dp),
                     tint = Color.Black
                 )
             },
-            selected = currentDestination?.hasRoute<Acteur>() == true,
-            onClick = { navController.navigate(Acteur()) },
+            selected = currentDestination?.hasRoute<Actors>() == true,
+            onClick = { navController.navigate(Actors()) },
             colors = NavigationRailItemDefaults.colors(
-                selectedIconColor = Color.Yellow, // Couleur surlignée si sélectionnée
+                indicatorColor = Color.Yellow
             )
         )
         Spacer(modifier = Modifier.weight(2f))
+        Text(text = "CinéVerse", color = Color.Yellow)
     }
 
 }
