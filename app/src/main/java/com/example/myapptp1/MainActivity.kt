@@ -13,6 +13,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FabPosition
 import androidx.compose.material3.FloatingActionButton
@@ -31,6 +33,7 @@ import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
+import androidx.compose.material3.contentColorFor
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -82,72 +85,68 @@ class MainActivity : ComponentActivity() {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun searching(){
-    var searchText by remember { mutableStateOf(TextFieldValue("")) }
-    val viewModel: MainViewModel = viewModel()
-    val navController = rememberNavController()
-    val navBackStackEntry by navController.currentBackStackEntryAsState()
-    val currentDestination = navBackStackEntry?.destination
-
+fun SearchBar(
+    modifier: Modifier = Modifier,
+    searchText: TextFieldValue,
+    onTextChanged: (TextFieldValue) -> Unit,
+    placeholderText: String = "Recherche..."
+) {
     TextField(
         value = searchText,
-        onValueChange = { query ->
-            searchText = query
-            if (currentDestination?.hasRoute<Movies>() == true) {
-
-                if (query.text.isNotEmpty()) {
-                    viewModel.searchMovies(query.text)
-                } else {
-                    viewModel.getMovies()
-                }
-
-            }
-            if (currentDestination?.hasRoute<Series>() == true) {
-
-                if (query.text.isNotEmpty()) {
-                    viewModel.searchSeries(query.text)
-                } else {
-                    viewModel.getSeries()
-                }
-
-            } else {
-                if (query.text.isNotEmpty()) {
-                    viewModel.searchActors(query.text)
-                } else {
-                    viewModel.getActors()
-                }
-
-            }
-        },
+        onValueChange = onTextChanged,
         singleLine = true,
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .padding(horizontal = 16.dp)
             .height(56.dp),
-        placeholder = { Text("Recherche...") },
+        placeholder = { Text(placeholderText) },
         colors = TextFieldDefaults.textFieldColors(
             cursorColor = Color.Yellow,
-            containerColor = Color( 252, 218, 48
-            )
+            containerColor = Color(252, 218, 48)
         )
     )
 }
 
-/*
 @Composable
-fun ButtonSearching(){
-    var showSearch by remember { mutableStateOf(false) }
-
-    IconButton(onClick = { showSearch = !showSearch }) {
+fun SearchButton(
+    showSearch: Boolean,
+    onSearchClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    IconButton(onClick = onSearchClick) {
         Icon(
             painter = painterResource(id = R.drawable.glass),
-            modifier = Modifier
-                .fillMaxSize(),
-            contentDescription = "Search"
-
+            modifier = modifier.fillMaxSize(),
+            contentDescription = if (showSearch) "Close Search" else "Search"
         )
     }
-}*/
+}
+
+fun searchMovies(query: String, viewModel: MainViewModel) {
+    if (query.isNotEmpty()) {
+        viewModel.searchMovies(query)
+    } else {
+        viewModel.getMovies()
+    }
+}
+
+fun searchSeries(query: String, viewModel: MainViewModel) {
+    if (query.isNotEmpty()) {
+        viewModel.searchSeries(query)
+    } else {
+        viewModel.getSeries()
+    }
+}
+
+fun searchActors(query: String, viewModel: MainViewModel) {
+    if (query.isNotEmpty()) {
+        viewModel.searchActors(query)
+    } else {
+        viewModel.getActors()
+    }
+}
+
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -158,7 +157,9 @@ fun NavigationBar() {
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentDestination = navBackStackEntry?.destination
     var showSearch by remember { mutableStateOf(false) }
+    var searchText by remember { mutableStateOf(TextFieldValue("")) }
 
+    var darkMode by remember { mutableStateOf(false) }
 
     Scaffold(
         topBar = {
@@ -168,42 +169,55 @@ fun NavigationBar() {
                     if (currentDestination?.hasRoute<Home>() != true) {
                         TopAppBar(
                             title = {
-                                //barre de recherche
                                 if (showSearch) {
-                                  searching()
+                                    SearchBar(
+                                        searchText = searchText,
+                                        onTextChanged = { query ->
+                                            searchText = query
+                                            when {
+                                                currentDestination?.hasRoute<Movies>() == true -> searchMovies(
+                                                    query.text,
+                                                    viewModel
+                                                )
+
+                                                currentDestination?.hasRoute<Series>() == true -> searchSeries(
+                                                    query.text,
+                                                    viewModel
+                                                )
+
+                                                else -> searchActors(query.text, viewModel)
+                                            }
+                                        }
+                                    )
                                 } else {
-                                    Text(text = "CinéVerse", modifier = Modifier.fillMaxWidth())
+                                    Button(onClick = {darkMode !=darkMode},
+                                        colors = ButtonDefaults.buttonColors(
+                                        containerColor = Color(252, 218, 48), // Couleur de fond du bouton
+                                        contentColor = Color.Black // Couleur du texte
+                                    ),
+                                        modifier = Modifier.fillMaxHeight()) {
+                                        Text(text = "CinéVerse")
+                                    }
+
                                 }
                             },
                             actions = {
-                                IconButton(onClick = { showSearch = !showSearch }) {
-                                    Icon(
-                                        painter = painterResource(id = R.drawable.glass),
-                                        modifier = Modifier
-                                            .fillMaxSize(),
-                                        contentDescription = "Search"
-
-                                    )
-                                }
-                            },
-                            modifier = Modifier
-                                .fillMaxWidth(),
-
-                            colors = TopAppBarDefaults.topAppBarColors(
-                                containerColor = Color(
-                                    252, 218, 48
+                                SearchButton(
+                                    showSearch = showSearch,
+                                    onSearchClick = { showSearch = !showSearch }
                                 )
+                            },
+                            modifier = Modifier.fillMaxWidth(),
+                            colors = TopAppBarDefaults.topAppBarColors(
+                                containerColor = Color(252, 218, 48)
                             ),
-
-
-                            )
+                        )
                     }
                 }
 
                 else -> {}
             }
         },
-
         //bouton flottant qui ramene à l'accueil
         floatingActionButton = {
             if (currentDestination?.hasRoute<Home>() != true) {

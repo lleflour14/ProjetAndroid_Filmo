@@ -4,6 +4,9 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -17,9 +20,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
@@ -34,19 +41,52 @@ fun ActorsScreen(
     windowSizeClass: WindowSizeClass
 ) {
     val actors by viewModel.actors.collectAsState()
+    var searchText by remember { mutableStateOf(TextFieldValue("")) }
+    var showSearch by remember { mutableStateOf(false) }
 
     Column(
         modifier = Modifier.padding(16.dp)
     ) {
-        Text(
-            text = "Les p'tits Acteurs",
-            fontWeight = FontWeight.Bold,
+        Row(
             modifier = Modifier
-                .padding(bottom = 16.dp)
-                .height(30.dp),
-            style = MaterialTheme.typography.headlineSmall
+                .fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween
 
-        )
+        ) {
+            Text(
+                text = "Les p'tits Acteurs",
+                fontWeight = FontWeight.Bold,
+                modifier = Modifier
+                    .weight(1f)
+                    .padding(end = 8.dp),
+                style = MaterialTheme.typography.headlineSmall
+
+            )
+            when (windowSizeClass.windowWidthSizeClass) {
+                WindowWidthSizeClass.COMPACT -> {}
+                else -> {
+                    SearchBar(
+                        searchText = searchText,
+                        onTextChanged = { query ->
+                            searchText = query
+                            if (query.text.isNotEmpty()) {
+                                viewModel.searchSeries(query.text)
+                            } else {
+                                viewModel.getMovies()
+                            }
+                        },
+                        modifier = Modifier
+                            .weight(1f)
+                            .height(56.dp)
+                    )
+                    SearchButton(
+                        showSearch = showSearch,
+                        onSearchClick = { showSearch = !showSearch }
+                    )
+                }
+
+            }
+        }
 
         LaunchedEffect(Unit) {
             viewModel.getActors()
@@ -103,28 +143,16 @@ fun ActorItem(actor: ModelActor, navController: NavController, windowSizeClass: 
                 modifier = Modifier.padding(top = 4.dp)
             )
         } else {
-            when (windowSizeClass.windowWidthSizeClass) {
-                WindowWidthSizeClass.COMPACT -> {
+
                     AsyncImage(
                         model = "https://image.tmdb.org/t/p/w500${actor.profile_path}",
                         contentDescription = null,
                         contentScale = ContentScale.Crop,
                         modifier = Modifier
                             .fillMaxWidth()
-                            .height(200.dp)
                     )
-                }
 
-                else -> {
-                    AsyncImage(
-                        model = "https://image.tmdb.org/t/p/w500${actor.profile_path}",
-                        contentDescription = null,
-                        contentScale = ContentScale.Crop,
-                        modifier = Modifier
-                            .size(190.dp)
-                    )
-                }
-            }
+
         }
 
         Text(
