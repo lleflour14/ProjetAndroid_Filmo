@@ -189,16 +189,35 @@ fun NavigationBar() {
                                             }
                                         }
                                     )
-                                } else {
-                                    Button(onClick = {darkMode !=darkMode},
+                                } else {if(!darkMode) {
+                                    Button(
+                                        onClick = { darkMode != darkMode },
                                         colors = ButtonDefaults.buttonColors(
-                                        containerColor = Color(252, 218, 48), // Couleur de fond du bouton
-                                        contentColor = Color.Black // Couleur du texte
-                                    ),
-                                        modifier = Modifier.fillMaxHeight()) {
+                                            containerColor = Color(
+                                                252,
+                                                218,
+                                                48
+                                            ), // Couleur de fond du bouton
+                                            contentColor = Color.Black // Couleur du texte
+                                        ),
+                                        modifier = Modifier.fillMaxHeight()
+                                    ) {
                                         Text(text = "CinéVerse")
                                     }
-
+                                }else{
+                                    Button(
+                                        onClick = { darkMode != darkMode },
+                                        colors = ButtonDefaults.buttonColors(
+                                            containerColor = Color.Black, // Couleur de fond du bouton
+                                            contentColor = Color(252,
+                                                218,
+                                                48) // Couleur du texte
+                                        ),
+                                        modifier = Modifier.fillMaxHeight()
+                                    ) {
+                                        Text(text = "CinéVerse")
+                                    }
+                                }
                                 }
                             },
                             actions = {
@@ -234,6 +253,7 @@ fun NavigationBar() {
                         modifier = Modifier.size(30.dp)
                     )
                 }
+
             }
         },
         floatingActionButtonPosition = FabPosition.End,
@@ -243,6 +263,7 @@ fun NavigationBar() {
                 when (windowSizeClass.windowWidthSizeClass) {
                     WindowWidthSizeClass.COMPACT -> {
                         //barre de naviagtion en bas
+                        if(!darkMode){
                         NavigationBar(
                             containerColor = Color(252, 218, 48),
                             modifier = Modifier
@@ -291,6 +312,56 @@ fun NavigationBar() {
                                 ),
                                 onClick = { navController.navigate(Actors()) })
                         }
+                        }else{
+                            NavigationBar(
+                                containerColor = Color.Black,
+                                modifier = Modifier
+                                    .height(100.dp)
+                            ) {
+                                NavigationBarItem(
+                                    icon = {
+                                        Icon(
+                                            painter = painterResource(id = R.drawable.camera),
+                                            contentDescription = "Movie Icon",
+                                            modifier = Modifier.size(24.dp),
+                                            tint = Color.White
+                                        )
+                                    }, label = { Text("Films") },
+                                    selected = currentDestination?.hasRoute<Movies>() == true,
+                                    colors = NavigationBarItemDefaults.colors(
+                                        indicatorColor = Color.DarkGray
+                                    ),
+                                    onClick = { navController.navigate(Movies()) })
+                                NavigationBarItem(
+                                    icon = {
+                                        Icon(
+                                            painter = painterResource(id = R.drawable.series),
+                                            contentDescription = "Serie Icon",
+                                            modifier = Modifier.size(24.dp),
+                                            tint = Color.White
+                                        )
+                                    }, label = { Text("Séries") },
+                                    selected = currentDestination?.hasRoute<Series>() == true,
+                                    colors = NavigationBarItemDefaults.colors(
+                                        indicatorColor = Color.DarkGray
+                                    ),
+                                    onClick = { navController.navigate(Series()) })
+                                NavigationBarItem(
+                                    icon = {
+                                        Icon(
+                                            painter = painterResource(id = R.drawable.person),
+                                            contentDescription = "Actor Icon",
+                                            modifier = Modifier.size(24.dp),
+                                            tint = Color.White
+                                        )
+                                    }, label = { Text("Acteurs") },
+                                    selected = currentDestination?.hasRoute<Actors>() == true,
+                                    colors = NavigationBarItemDefaults.colors(
+                                        indicatorColor = Color.DarkGray
+                                    ),
+                                    onClick = { navController.navigate(Actors()) })
+                            }
+                        }
                     }
 
                     else -> {}
@@ -299,7 +370,6 @@ fun NavigationBar() {
 
         })
     { innerPadding ->
-
         Row {
             if (currentDestination?.hasRoute<Home>() != true) {
                 when (windowSizeClass.windowWidthSizeClass) {
@@ -355,12 +425,12 @@ fun NavigationBar() {
                     }
 
                     composable(
-                        "acteurDetails/{actorId}",
+                        "actorDetails/{actorId}",
                         arguments = listOf(navArgument("actorId") { type = NavType.IntType })
                     ) { backStackEntry ->
                         val actorId = backStackEntry.arguments?.getInt("actorId")
                         actorId?.let {
-                            ActorDetailsScreen(viewModel = viewModel, actorId = it, navController)
+                            ActorDetailsScreen(viewModel = viewModel, actorId = it, navController,windowSizeClass)
                         }
                     }
                 }

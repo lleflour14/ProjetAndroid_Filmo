@@ -103,7 +103,7 @@ data class ModelSerie(
     val status: String,
     val tagline: String,
     val type: String,
-    val vote_average: Float,
+    val vote_average: Double,
     val vote_count: Int
 )
 
