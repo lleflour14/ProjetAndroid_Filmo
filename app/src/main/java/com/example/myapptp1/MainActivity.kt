@@ -13,8 +13,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FabPosition
 import androidx.compose.material3.FloatingActionButton
@@ -33,7 +31,6 @@ import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
-import androidx.compose.material3.contentColorFor
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -56,7 +53,6 @@ import kotlinx.serialization.Serializable
 import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.NavType
 import androidx.navigation.navArgument
-import androidx.window.core.layout.WindowSizeClass
 import androidx.window.core.layout.WindowWidthSizeClass
 
 @Serializable
@@ -159,7 +155,7 @@ fun NavigationBar() {
     var showSearch by remember { mutableStateOf(false) }
     var searchText by remember { mutableStateOf(TextFieldValue("")) }
 
-    var darkMode by remember { mutableStateOf(false) }
+    //var darkMode by remember { mutableStateOf(false) }
 
     Scaffold(
         topBar = {
@@ -189,35 +185,12 @@ fun NavigationBar() {
                                             }
                                         }
                                     )
-                                } else {if(!darkMode) {
-                                    Button(
-                                        onClick = { darkMode != darkMode },
-                                        colors = ButtonDefaults.buttonColors(
-                                            containerColor = Color(
-                                                252,
-                                                218,
-                                                48
-                                            ), // Couleur de fond du bouton
-                                            contentColor = Color.Black // Couleur du texte
-                                        ),
-                                        modifier = Modifier.fillMaxHeight()
-                                    ) {
-                                        Text(text = "CinéVerse")
-                                    }
-                                }else{
-                                    Button(
-                                        onClick = { darkMode != darkMode },
-                                        colors = ButtonDefaults.buttonColors(
-                                            containerColor = Color.Black, // Couleur de fond du bouton
-                                            contentColor = Color(252,
-                                                218,
-                                                48) // Couleur du texte
-                                        ),
-                                        modifier = Modifier.fillMaxHeight()
-                                    ) {
-                                        Text(text = "CinéVerse")
-                                    }
-                                }
+                                } else {
+                                        Icon(
+                                            painter = painterResource(id = R.drawable.logo_cv),
+                                            contentDescription = "logo",
+                                            modifier = Modifier.size(35.dp)
+                                        )
                                 }
                             },
                             actions = {
@@ -263,7 +236,6 @@ fun NavigationBar() {
                 when (windowSizeClass.windowWidthSizeClass) {
                     WindowWidthSizeClass.COMPACT -> {
                         //barre de naviagtion en bas
-                        if(!darkMode){
                         NavigationBar(
                             containerColor = Color(252, 218, 48),
                             modifier = Modifier
@@ -274,10 +246,10 @@ fun NavigationBar() {
                                     Icon(
                                         painter = painterResource(id = R.drawable.camera),
                                         contentDescription = "Movie Icon",
-                                        modifier = Modifier.size(24.dp),
+                                        modifier = Modifier.size(35.dp),
                                         tint = Color.Black
                                     )
-                                }, label = { Text("Films") },
+                                },
                                 selected = currentDestination?.hasRoute<Movies>() == true,
                                 colors = NavigationBarItemDefaults.colors(
                                     indicatorColor = Color.Yellow
@@ -288,10 +260,10 @@ fun NavigationBar() {
                                     Icon(
                                         painter = painterResource(id = R.drawable.series),
                                         contentDescription = "Serie Icon",
-                                        modifier = Modifier.size(24.dp),
+                                        modifier = Modifier.size(35.dp),
                                         tint = Color.Black
                                     )
-                                }, label = { Text("Séries") },
+                                },
                                 selected = currentDestination?.hasRoute<Series>() == true,
                                 colors = NavigationBarItemDefaults.colors(
                                     indicatorColor = Color.Yellow
@@ -302,72 +274,19 @@ fun NavigationBar() {
                                     Icon(
                                         painter = painterResource(id = R.drawable.person),
                                         contentDescription = "Actor Icon",
-                                        modifier = Modifier.size(24.dp),
+                                        modifier = Modifier.size(35.dp),
                                         tint = Color.Black
                                     )
-                                }, label = { Text("Acteurs") },
+                                },
                                 selected = currentDestination?.hasRoute<Actors>() == true,
                                 colors = NavigationBarItemDefaults.colors(
                                     indicatorColor = Color.Yellow
                                 ),
                                 onClick = { navController.navigate(Actors()) })
-                        }
-                        }else{
-                            NavigationBar(
-                                containerColor = Color.Black,
-                                modifier = Modifier
-                                    .height(100.dp)
-                            ) {
-                                NavigationBarItem(
-                                    icon = {
-                                        Icon(
-                                            painter = painterResource(id = R.drawable.camera),
-                                            contentDescription = "Movie Icon",
-                                            modifier = Modifier.size(24.dp),
-                                            tint = Color.White
-                                        )
-                                    }, label = { Text("Films") },
-                                    selected = currentDestination?.hasRoute<Movies>() == true,
-                                    colors = NavigationBarItemDefaults.colors(
-                                        indicatorColor = Color.DarkGray
-                                    ),
-                                    onClick = { navController.navigate(Movies()) })
-                                NavigationBarItem(
-                                    icon = {
-                                        Icon(
-                                            painter = painterResource(id = R.drawable.series),
-                                            contentDescription = "Serie Icon",
-                                            modifier = Modifier.size(24.dp),
-                                            tint = Color.White
-                                        )
-                                    }, label = { Text("Séries") },
-                                    selected = currentDestination?.hasRoute<Series>() == true,
-                                    colors = NavigationBarItemDefaults.colors(
-                                        indicatorColor = Color.DarkGray
-                                    ),
-                                    onClick = { navController.navigate(Series()) })
-                                NavigationBarItem(
-                                    icon = {
-                                        Icon(
-                                            painter = painterResource(id = R.drawable.person),
-                                            contentDescription = "Actor Icon",
-                                            modifier = Modifier.size(24.dp),
-                                            tint = Color.White
-                                        )
-                                    }, label = { Text("Acteurs") },
-                                    selected = currentDestination?.hasRoute<Actors>() == true,
-                                    colors = NavigationBarItemDefaults.colors(
-                                        indicatorColor = Color.DarkGray
-                                    ),
-                                    onClick = { navController.navigate(Actors()) })
-                            }
-                        }
-                    }
-
+                        }}
                     else -> {}
                 }
             }
-
         })
     { innerPadding ->
         Row {
