@@ -97,7 +97,7 @@ fun <T> MediaItem(
     item: T,
     navController: NavController,
     windowSizeClass: WindowSizeClass,
-    imageUrl: String,
+    pictureUrl: String,
     title: String,
     releaseDate: String,
     destinationRoute: String
@@ -109,7 +109,7 @@ fun <T> MediaItem(
             navController.navigate(destinationRoute)
         }) {
         AsyncImage(
-            model = imageUrl,
+            model = pictureUrl,
             contentDescription = null,
             contentScale = ContentScale.Crop,
             modifier = Modifier
@@ -130,8 +130,8 @@ fun <T> MediaItem(
 
 @Composable
 fun MediaDetailsHeader(
-    imageUrlBack: String?,
-    img: String?,
+    pictureUrlBack: String?,
+    pic: String?,
     title: String,
     releaseDateOrBirth: String?,
     genresOrPlace: String?,
@@ -144,7 +144,7 @@ fun MediaDetailsHeader(
             WindowWidthSizeClass.COMPACT -> {
                 if(mediaType != "Actor"){
                 AsyncImage(
-                    model = "https://image.tmdb.org/t/p/w500$imageUrlBack",
+                    model = "https://image.tmdb.org/t/p/w500$pictureUrlBack",
                     contentDescription = "Image principale",
                     contentScale = ContentScale.Crop,
                     modifier = Modifier
@@ -159,7 +159,7 @@ fun MediaDetailsHeader(
                 modifier = Modifier.padding(16.dp)
             )
             Row(modifier = Modifier.padding(16.dp)) {
-                if (img == null) {
+                if (pic == null) {
                     Icon(
                         painter = painterResource(id = R.drawable.user),
                         contentDescription = "user Icon",
@@ -167,7 +167,7 @@ fun MediaDetailsHeader(
                     )
                 } else {
                     AsyncImage(
-                        model = "https://image.tmdb.org/t/p/w500$img",
+                        model = "https://image.tmdb.org/t/p/w500$pic",
                         contentDescription = "Image principale",
                         contentScale = ContentScale.Crop,
                         modifier = Modifier

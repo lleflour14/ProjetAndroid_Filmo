@@ -39,8 +39,10 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavDestination
@@ -81,71 +83,6 @@ class MainActivity : ComponentActivity() {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SearchBar(
-    modifier: Modifier = Modifier,
-    searchText: TextFieldValue,
-    onTextChanged: (TextFieldValue) -> Unit,
-    placeholderText: String = "Recherche..."
-) {
-    TextField(
-        value = searchText,
-        onValueChange = onTextChanged,
-        singleLine = true,
-        modifier = modifier
-            .fillMaxWidth()
-            .padding(horizontal = 16.dp)
-            .height(56.dp),
-        placeholder = { Text(placeholderText) },
-        colors = TextFieldDefaults.textFieldColors(
-            cursorColor = Color.Yellow,
-            containerColor = Color(252, 218, 48)
-        )
-    )
-}
-
-@Composable
-fun SearchButton(
-    showSearch: Boolean,
-    onSearchClick: () -> Unit,
-    modifier: Modifier = Modifier
-) {
-    IconButton(onClick = onSearchClick) {
-        Icon(
-            painter = painterResource(id = R.drawable.glass),
-            modifier = modifier.fillMaxSize(),
-            contentDescription = if (showSearch) "Close Search" else "Search"
-        )
-    }
-}
-
-fun searchMovies(query: String, viewModel: MainViewModel) {
-    if (query.isNotEmpty()) {
-        viewModel.searchMovies(query)
-    } else {
-        viewModel.getMovies()
-    }
-}
-
-fun searchSeries(query: String, viewModel: MainViewModel) {
-    if (query.isNotEmpty()) {
-        viewModel.searchSeries(query)
-    } else {
-        viewModel.getSeries()
-    }
-}
-
-fun searchActors(query: String, viewModel: MainViewModel) {
-    if (query.isNotEmpty()) {
-        viewModel.searchActors(query)
-    } else {
-        viewModel.getActors()
-    }
-}
-
-
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
 fun NavigationBar() {
     val windowSizeClass = currentWindowAdaptiveInfo().windowSizeClass
     val viewModel: MainViewModel = viewModel()
@@ -154,8 +91,6 @@ fun NavigationBar() {
     val currentDestination = navBackStackEntry?.destination
     var showSearch by remember { mutableStateOf(false) }
     var searchText by remember { mutableStateOf(TextFieldValue("")) }
-
-    //var darkMode by remember { mutableStateOf(false) }
 
     Scaffold(
         topBar = {
@@ -186,10 +121,9 @@ fun NavigationBar() {
                                         }
                                     )
                                 } else {
-                                        Icon(
-                                            painter = painterResource(id = R.drawable.logo_cv),
-                                            contentDescription = "logo",
-                                            modifier = Modifier.size(35.dp)
+                                        Text(
+                                            text = "Ciné'Verse", color = Color.Yellow,
+                                            fontSize = 24.sp, fontWeight = FontWeight.Bold
                                         )
                                 }
                             },
@@ -206,11 +140,9 @@ fun NavigationBar() {
                         )
                     }
                 }
-
                 else -> {}
             }
         },
-        //bouton flottant qui ramene à l'accueil
         floatingActionButton = {
             if (currentDestination?.hasRoute<Home>() != true) {
                 FloatingActionButton(
@@ -235,7 +167,6 @@ fun NavigationBar() {
             if (currentDestination?.hasRoute<Home>() != true) {
                 when (windowSizeClass.windowWidthSizeClass) {
                     WindowWidthSizeClass.COMPACT -> {
-                        //barre de naviagtion en bas
                         NavigationBar(
                             containerColor = Color(252, 218, 48),
                             modifier = Modifier
@@ -418,8 +349,71 @@ fun NavigationBarSide(
             )
         )
         Spacer(modifier = Modifier.weight(2f))
-        Text(text = "CinéVerse", color = Color.Yellow)
+        Text(text = "CinéVerse", color = Color.Yellow,fontSize = 24.sp, fontWeight = FontWeight.Bold)
     }
 
 }
 
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun SearchBar(
+    modifier: Modifier = Modifier,
+    searchText: TextFieldValue,
+    onTextChanged: (TextFieldValue) -> Unit,
+    placeholderText: String = "Recherche..."
+) {
+    TextField(
+        value = searchText,
+        onValueChange = onTextChanged,
+        singleLine = true,
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp)
+            .height(56.dp),
+        placeholder = { Text(placeholderText) },
+        colors = TextFieldDefaults.textFieldColors(
+            cursorColor = Color.Yellow,
+            containerColor = Color(252, 218, 48)
+        )
+    )
+}
+
+@Composable
+fun SearchButton(
+    showSearch: Boolean,
+    onSearchClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    IconButton(onClick = onSearchClick) {
+        Icon(
+            painter = painterResource(id = R.drawable.glass),
+            modifier = modifier.fillMaxSize(),
+            contentDescription = if (showSearch) "Close Search" else "Search"
+        )
+    }
+}
+
+fun searchMovies(query: String, viewModel: MainViewModel) {
+    if (query.isNotEmpty()) {
+        viewModel.searchMovies(query)
+    } else {
+        viewModel.getMovies()
+    }
+}
+
+fun searchSeries(query: String, viewModel: MainViewModel) {
+    if (query.isNotEmpty()) {
+        viewModel.searchSeries(query)
+    } else {
+        viewModel.getSeries()
+    }
+}
+
+fun searchActors(query: String, viewModel: MainViewModel) {
+    if (query.isNotEmpty()) {
+        viewModel.searchActors(query)
+    } else {
+        viewModel.getActors()
+    }
+}
