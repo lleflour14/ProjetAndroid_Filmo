@@ -45,7 +45,6 @@ fun <T> MediaScreen(
     items: List<T>,
     onGetItems: () -> Unit,
     onSearchItems: (String) -> Unit,
-    navController: NavController,
     windowSizeClass: WindowSizeClass,
     itemContent: @Composable (T) -> Unit
 ) {

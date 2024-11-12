@@ -28,7 +28,6 @@ fun ActorsScreen(
         items = actors,
         onGetItems = { viewModel.getActors() },
         onSearchItems = { viewModel.searchActors(it) },
-        navController = navController,
         windowSizeClass = windowSizeClass
     ) { actor -> ActorItem(actor, navController, windowSizeClass) }
 }
@@ -40,7 +39,7 @@ fun ActorItem(actor: ModelActor, navController: NavController, windowSizeClass: 
         item = actor,
         navController = navController,
         windowSizeClass = windowSizeClass,
-        imageUrl = "https://image.tmdb.org/t/p/w500${actor.profile_path}",
+        pictureUrl = "https://image.tmdb.org/t/p/w500${actor.profile_path}",
         title = actor.name,
         releaseDate = null.toString(),
         destinationRoute = "actorDetails/${actor.id}"
@@ -65,8 +64,8 @@ fun ActorDetailsScreen(
         LazyColumn(modifier = Modifier.fillMaxSize()) {
             item {
                 MediaDetailsHeader(
-                    imageUrlBack = null,
-                    img = actorDetails.profile_path,
+                    pictureUrlBack = null,
+                    pic = actorDetails.profile_path,
                     title = actorDetails.name,
                     releaseDateOrBirth = actorDetails.birthday,
                     genresOrPlace = actorDetails.place_of_birth,

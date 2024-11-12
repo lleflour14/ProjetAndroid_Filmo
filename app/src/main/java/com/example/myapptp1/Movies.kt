@@ -27,7 +27,6 @@ fun MoviesScreen(
         items = movies,
         onGetItems = { viewModel.getMovies() },
         onSearchItems = { viewModel.searchMovies(it) },
-        navController = navController,
         windowSizeClass = windowSizeClass
     ) { movie -> MovieItem(movie, navController, windowSizeClass) }
 }
@@ -39,7 +38,7 @@ fun MovieItem(movie: ModelMovie, navController: NavController, windowSizeClass: 
         item = movie,
         navController = navController,
         windowSizeClass = windowSizeClass,
-        imageUrl = "https://image.tmdb.org/t/p/w500${movie.poster_path}",
+        pictureUrl = "https://image.tmdb.org/t/p/w500${movie.poster_path}",
         title = movie.title,
         releaseDate = movie.release_date,
         destinationRoute = "movieDetails/${movie.id}"
@@ -64,8 +63,8 @@ fun MovieDetailsScreen(
         LazyColumn(modifier = Modifier.fillMaxSize()) {
             item {
                 MediaDetailsHeader(
-                    imageUrlBack = movieDetails.backdrop_path,
-                    img = movieDetails.poster_path,
+                    pictureUrlBack = movieDetails.backdrop_path,
+                    pic = movieDetails.poster_path,
                     title = movieDetails.title,
                     releaseDateOrBirth = movieDetails.release_date,
                     genresOrPlace = movieDetails.genres?.joinToString(", ") { it.name },

@@ -27,7 +27,6 @@ fun SeriesScreen(
         items = series,
         onGetItems = { viewModel.getSeries() },
         onSearchItems = { viewModel.searchSeries(it) },
-        navController = navController,
         windowSizeClass = windowSizeClass
     ) { serie -> SerieItem(serie, navController, windowSizeClass) }
 }
@@ -39,7 +38,7 @@ fun SerieItem(serie: ModelSerie, navController: NavController, windowSizeClass: 
         item = serie,
         navController = navController,
         windowSizeClass = windowSizeClass,
-        imageUrl = "https://image.tmdb.org/t/p/w500${serie.poster_path}",
+        pictureUrl = "https://image.tmdb.org/t/p/w500${serie.poster_path}",
         title = serie.name,
         releaseDate = serie.first_air_date,
         destinationRoute = "serieDetails/${serie.id}"
@@ -63,8 +62,8 @@ fun SerieDetailsScreen(
         LazyColumn(modifier = Modifier.fillMaxSize()) {
             item {
                 MediaDetailsHeader(
-                    imageUrlBack = serieDetails.backdrop_path,
-                    img = serieDetails.poster_path,
+                    pictureUrlBack = serieDetails.backdrop_path,
+                    pic = serieDetails.poster_path,
                     title = serieDetails.name,
                     releaseDateOrBirth = serieDetails.last_air_date,
                     genresOrPlace = serieDetails.genres?.joinToString(", ") { it.name },

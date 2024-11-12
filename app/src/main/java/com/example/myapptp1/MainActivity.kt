@@ -96,7 +96,7 @@ fun NavigationBar() {
         topBar = {
             when (windowSizeClass.windowWidthSizeClass) {
                 WindowWidthSizeClass.COMPACT -> {
-
+                    // lorsque le telephone est en format paysage on affiche la searchBar
                     if (currentDestination?.hasRoute<Home>() != true) {
                         TopAppBar(
                             title = {
@@ -105,6 +105,7 @@ fun NavigationBar() {
                                         searchText = searchText,
                                         onTextChanged = { query ->
                                             searchText = query
+                                            //en fonction de la route où je me trouve je fais une requête pour chercher
                                             when {
                                                 currentDestination?.hasRoute<Movies>() == true -> searchMovies(
                                                     query.text,
@@ -121,12 +122,14 @@ fun NavigationBar() {
                                         }
                                     )
                                 } else {
+                                        //le titre de mon appli
                                         Text(
                                             text = "Ciné'Verse", color = Color.Yellow,
                                             fontSize = 24.sp, fontWeight = FontWeight.Bold
                                         )
                                 }
                             },
+                            //afficher ou pas la barre de recherche
                             actions = {
                                 SearchButton(
                                     showSearch = showSearch,
@@ -143,6 +146,7 @@ fun NavigationBar() {
                 else -> {}
             }
         },
+        // bouton flottant qui ramène à la page d'accueil
         floatingActionButton = {
             if (currentDestination?.hasRoute<Home>() != true) {
                 FloatingActionButton(
@@ -161,9 +165,11 @@ fun NavigationBar() {
 
             }
         },
+        //on le place à droite au dessus de la bottomBar
         floatingActionButtonPosition = FabPosition.End,
 
         bottomBar = {
+            //on n'affiche pas la bottomBar si on est sur la page d'accueil
             if (currentDestination?.hasRoute<Home>() != true) {
                 when (windowSizeClass.windowWidthSizeClass) {
                     WindowWidthSizeClass.COMPACT -> {
@@ -172,6 +178,7 @@ fun NavigationBar() {
                             modifier = Modifier
                                 .height(100.dp)
                         ) {
+                            //un item pour chaque page (films/séries/acteurs)
                             NavigationBarItem(
                                 icon = {
                                     Icon(
@@ -220,6 +227,7 @@ fun NavigationBar() {
             }
         })
     { innerPadding ->
+        //une Row à 2 column pour afficher la sideBar dans une colonne en mode paysage et le NavHost dans l'autre
         Row {
             if (currentDestination?.hasRoute<Home>() != true) {
                 when (windowSizeClass.windowWidthSizeClass) {
@@ -239,11 +247,13 @@ fun NavigationBar() {
                     navController = navController, startDestination = Home(),
                     modifier = Modifier.padding(innerPadding)
                 ) {
+                    //un composable par page qui amène a la fonction {}Screen
                     composable<Home> { HomeScreen(windowSizeClass, navController) }
                     composable<Movies> { MoviesScreen(viewModel, navController, windowSizeClass) }
                     composable<Series> { SeriesScreen(viewModel, navController, windowSizeClass) }
                     composable<Actors> { ActorsScreen(viewModel, navController, windowSizeClass) }
 
+                    //afficher les détails en fonction de l'id
                     composable(
                         "movieDetails/{movieId}",
                         arguments = listOf(navArgument("movieId") { type = NavType.IntType })
@@ -289,7 +299,7 @@ fun NavigationBar() {
     }
 }
 
-
+//barre de navigation verticale pour le mode paysage
 @Composable
 fun NavigationBarSide(
     navController: NavController,
@@ -300,6 +310,7 @@ fun NavigationBarSide(
             .fillMaxHeight(),
         containerColor = Color(252, 218, 48)
     ) {
+        //un item pour chaque page (films/séries/acteurs)
         Spacer(modifier = Modifier.weight(2f))
         NavigationRailItem(
             icon = {
@@ -394,6 +405,7 @@ fun SearchButton(
     }
 }
 
+//fonction de recherches
 fun searchMovies(query: String, viewModel: MainViewModel) {
     if (query.isNotEmpty()) {
         viewModel.searchMovies(query)
