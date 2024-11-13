@@ -269,7 +269,7 @@ fun NavigationBar() {
                     composable<Home> { HomeScreen(windowSizeClass, navController) }
                     composable<Movies> { MoviesScreen(viewModel, navController, windowSizeClass) }
                     composable<Series> { SeriesScreen(viewModel, navController, windowSizeClass) }
-                    composable<Collections> { CollectionsScreen(viewModel, navController, windowSizeClass) }
+                    composable<Collections> { CollectionsScreen(viewModel, navController) }
 
                     //afficher les détails en fonction de l'id
                     composable(
