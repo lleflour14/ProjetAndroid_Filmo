@@ -13,6 +13,8 @@ class MainViewModel : ViewModel() {
     val movies = MutableStateFlow<List<ModelMovie>>(listOf())
     val series = MutableStateFlow<List<ModelSerie>>(listOf())
     val actors = MutableStateFlow<List<ModelActor>>(listOf())
+    val collections = MutableStateFlow<List<ModelCollection>>(listOf())
+
 
     private val _selectedMovie = MutableStateFlow<ModelMovie?>(null)
     val selectedMovie: StateFlow<ModelMovie?> = _selectedMovie
@@ -140,6 +142,21 @@ class MainViewModel : ViewModel() {
                 _selectedActor.value = actorDetails
             } catch (e: Exception) {
                 e.printStackTrace()
+            }
+        }
+    }
+
+    fun searchCollections() {
+        viewModelScope.launch {
+            try {
+                val response = api.searchCollections(api_key, "fr", "horror")
+                if (response.isSuccessful) {
+                    response.body()?.let { collectionList ->
+                        collections.value = collectionList.results
+                    }
+                }
+            } catch (e: Exception) {
+                Log.e("MainViewModel", "Erreur lors de la recherche de films", e)
             }
         }
     }
