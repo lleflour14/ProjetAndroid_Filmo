@@ -260,3 +260,21 @@ data class Season(
     val season_number: Int,
     val vote_average: Float
 )
+
+data class ModelListCollection(
+    val page: Int,
+    val results: List<ModelCollection>,
+    val total_pages: Int,
+    val total_results: Int
+)
+
+data class ModelCollection(
+    val adult: Boolean,
+    val backdrop_path: String,
+    val id: Int,
+    val name: String,
+    val original_language: String,
+    val original_name: String,
+    val overview: String,
+    val poster_path: String
+)
