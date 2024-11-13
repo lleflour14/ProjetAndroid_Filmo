@@ -69,6 +69,9 @@ class Series
 @Serializable
 class Actors
 
+@Serializable
+class Collections
+
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -221,6 +224,21 @@ fun NavigationBar() {
                                     indicatorColor = Color.Yellow
                                 ),
                                 onClick = { navController.navigate(Actors()) })
+
+                            NavigationBarItem(
+                                icon = {
+                                    Icon(
+                                        painter = painterResource(id = R.drawable.collection),
+                                        contentDescription = "Collection Icon",
+                                        modifier = Modifier.size(35.dp),
+                                        tint = Color.Black
+                                    )
+                                },
+                                selected = currentDestination?.hasRoute<Collections>() == true,
+                                colors = NavigationBarItemDefaults.colors(
+                                    indicatorColor = Color.Yellow
+                                ),
+                                onClick = { navController.navigate(Collections()) })
                         }}
                     else -> {}
                 }
@@ -251,7 +269,7 @@ fun NavigationBar() {
                     composable<Home> { HomeScreen(windowSizeClass, navController) }
                     composable<Movies> { MoviesScreen(viewModel, navController, windowSizeClass) }
                     composable<Series> { SeriesScreen(viewModel, navController, windowSizeClass) }
-                    composable<Actors> { ActorsScreen(viewModel, navController, windowSizeClass) }
+                    composable<Collections> { CollectionsScreen(viewModel, navController, windowSizeClass) }
 
                     //afficher les détails en fonction de l'id
                     composable(
@@ -355,6 +373,22 @@ fun NavigationBarSide(
             },
             selected = currentDestination?.hasRoute<Actors>() == true,
             onClick = { navController.navigate(Actors()) },
+            colors = NavigationRailItemDefaults.colors(
+                indicatorColor = Color.Yellow
+            )
+        )
+        Spacer(modifier = Modifier.weight(1f))
+        NavigationRailItem(
+            icon = {
+                Icon(
+                    painter = painterResource(id = R.drawable.collection),
+                    contentDescription = "Collections",
+                    modifier = Modifier.size(40.dp),
+                    tint = Color.Black
+                )
+            },
+            selected = currentDestination?.hasRoute<Collections>() == true,
+            onClick = { navController.navigate(Collections()) },
             colors = NavigationRailItemDefaults.colors(
                 indicatorColor = Color.Yellow
             )
